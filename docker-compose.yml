@@ -1,0 +1,28 @@
+# Schema version dari Docker Compose yang kita tulis. 
+# Pastikan Anda selalu menggunakan versi terbaru
+version: "3"
+
+# Bagian ini menentukan volume yg dipakai untuk menyimpan data
+volumes:
+  app-db:
+
+# Daftar container yang akan dibuat
+services:
+
+  # Container database menggunakan mongodb dan di set selalu menyala
+  item-db:
+    image: mongo:3
+    volumes:
+      - app-db:/data/db
+    restart: always
+
+  # Container aplikasi yang menggunan custom image dari docker hub
+  # Container ini memerlukan service item-db dan port nya dipublish ke port Host:80
+  # Serta di set selalu menyala
+  item-app:
+    image: ghcr.io/stamimy/item-app:v1
+    ports:
+      - "80:8080"
+    depends_on:
+      - item-db
+    restart: always
